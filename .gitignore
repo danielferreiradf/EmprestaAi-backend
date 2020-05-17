@@ -1,0 +1,6 @@
+# Folders
+node_modules
+
+# Files
+prisma/.env
+src/config/dev.env
