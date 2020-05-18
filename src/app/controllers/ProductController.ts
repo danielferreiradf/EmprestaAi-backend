@@ -11,7 +11,22 @@ export const ProductController = {
   async get(req: Request, res: Response) {
     const prisma = new PrismaClient();
 
-    const products = await prisma.product.findMany();
+    const products = await prisma.product.findMany({
+      include: {
+        owner: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            address: true,
+            city: true,
+            state: true,
+            cep: true,
+          },
+        },
+      },
+    });
 
     if (!products) {
       return res.status(404).send({ message: "No products found." });
