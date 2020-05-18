@@ -60,12 +60,39 @@ export const ProductController = {
         },
       },
     });
-
     if (!product) {
       return res.status(404).send({ message: "Product not found." });
     }
 
     return res.json(product);
+  },
+
+  // @desc Gets all products from user
+  // @method GET
+  // @route /api/users/products/:ownerId
+  // @access Private
+
+  async getUserProducts(req: Request, res: Response) {
+    const prisma = new PrismaClient();
+
+    const products = await prisma.product.findMany({
+      where: { ownerId: +req.params.ownerId },
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        description: true,
+        location: true,
+        ownerId: true,
+        statusRent: true,
+      },
+    });
+    console.log(products);
+    if (!products || !products.length) {
+      return res.status(404).send({ message: "Products not found." });
+    }
+
+    return res.json(products);
   },
 
   // @desc Create new product

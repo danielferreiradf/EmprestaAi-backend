@@ -13,6 +13,7 @@ routes.post("/users", UserController.create);
 // Product Routes
 routes.get("/products/:productId", ProductController.get);
 routes.get("/products", ProductController.getAll);
-routes.post("/products/", ProductController.create);
+routes.get("/users/products/:ownerId", ProductController.getUserProducts);
+routes.post("/products", ProductController.create);
 
 // Order Routes
