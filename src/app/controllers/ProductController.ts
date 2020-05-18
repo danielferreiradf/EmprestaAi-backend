@@ -117,7 +117,7 @@ export const ProductController = {
     try {
       const prisma = new PrismaClient();
 
-      const { ownerId } = req.params;
+      // const { ownerId } = req.params;
 
       const createProductSchema = Joi.object().keys({
         name: Joi.string().required(),
