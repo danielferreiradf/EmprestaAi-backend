@@ -10,27 +10,31 @@ export const UserController = {
   // @access Private
 
   async getAll(req: Request, res: Response) {
-    const prisma = new PrismaClient();
+    try {
+      const prisma = new PrismaClient();
 
-    const users = await prisma.user.findMany({
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        address: true,
-        city: true,
-        state: true,
-        cep: true,
-      },
-    });
+      const users = await prisma.user.findMany({
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          state: true,
+          cep: true,
+        },
+      });
 
-    if (!users) {
-      return res.status(404).send({ message: "Users not found." });
+      if (!users) {
+        return res.status(404).send({ message: "Users not found." });
+      }
+
+      return res.json(users);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
-
-    return res.json(users);
   },
 
   // @desc Gets single user
@@ -39,28 +43,32 @@ export const UserController = {
   // @access Private
 
   async get(req: Request, res: Response) {
-    const prisma = new PrismaClient();
+    try {
+      const prisma = new PrismaClient();
 
-    const user = await prisma.user.findOne({
-      where: { id: +req.params.userId },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        address: true,
-        city: true,
-        state: true,
-        cep: true,
-      },
-    });
+      const user = await prisma.user.findOne({
+        where: { id: +req.params.userId },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          state: true,
+          cep: true,
+        },
+      });
 
-    if (!user) {
-      return res.status(404).send({ message: "User not found." });
+      if (!user) {
+        return res.status(404).send({ message: "User not found." });
+      }
+
+      return res.json(user);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
-
-    return res.json(user);
   },
 
   // @desc Creates new user
@@ -69,50 +77,54 @@ export const UserController = {
   // @access Public
 
   async create(req: Request, res: Response) {
-    const prisma = new PrismaClient();
+    try {
+      const prisma = new PrismaClient();
 
-    const createUserSchema = Joi.object().keys({
-      firstName: Joi.string().required(),
-      lastName: Joi.string().required(),
-      email: Joi.string().email().required(),
-      address: Joi.string().required(),
-      city: Joi.string().required(),
-      state: Joi.string().required(),
-      cep: Joi.number().required(),
-      phone: Joi.number().required(),
-      password: Joi.string().min(6).required(),
-    });
-    const { error } = createUserSchema.validate(req.body);
+      const createUserSchema = Joi.object().keys({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        email: Joi.string().email().required(),
+        address: Joi.string().required(),
+        city: Joi.string().required(),
+        state: Joi.string().required(),
+        cep: Joi.number().required(),
+        phone: Joi.number().required(),
+        password: Joi.string().min(6).required(),
+      });
+      const { error } = createUserSchema.validate(req.body);
 
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+
+      const userExists = await prisma.user.findOne({
+        where: { email: req.body.email },
+      });
+
+      if (userExists) {
+        return res.status(400).json({ message: "User already exists." });
+      }
+
+      const hashedPassword = await bcryptjs.hash(req.body.password, 8);
+
+      const newUser = await prisma.user.create({
+        data: { ...req.body, password: hashedPassword },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          state: true,
+          cep: true,
+        },
+      });
+
+      return res.json(newUser);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
     }
-
-    const userExists = await prisma.user.findOne({
-      where: { email: req.body.email },
-    });
-
-    if (userExists) {
-      return res.status(400).json({ message: "User already exists." });
-    }
-
-    const hashedPassword = await bcryptjs.hash(req.body.password, 8);
-
-    const newUser = await prisma.user.create({
-      data: { ...req.body, password: hashedPassword },
-      select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        email: true,
-        phone: true,
-        address: true,
-        city: true,
-        state: true,
-        cep: true,
-      },
-    });
-
-    return res.json(newUser);
   },
 };

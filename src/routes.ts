@@ -17,3 +17,4 @@ routes.get("/users/products/:ownerId", ProductController.getUserProducts);
 routes.post("/products", ProductController.create);
 
 // Order Routes
+routes.get("/orders", OrderController.get);
