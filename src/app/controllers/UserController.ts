@@ -9,7 +9,7 @@ export const UserController = {
   // @route /api/users
   // @access Private
 
-  async get(req: Request, res: Response) {
+  async getAll(req: Request, res: Response) {
     const prisma = new PrismaClient();
 
     const users = await prisma.user.findMany({
@@ -26,8 +26,43 @@ export const UserController = {
       },
     });
 
+    if (!users) {
+      return res.status(404).send({ message: "Users not found." });
+    }
+
     return res.json(users);
   },
+
+  // @desc Gets single user
+  // @method GET
+  // @route /api/users/:userId
+  // @access Private
+
+  async get(req: Request, res: Response) {
+    const prisma = new PrismaClient();
+
+    const user = await prisma.user.findOne({
+      where: { id: +req.params.userId },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        phone: true,
+        address: true,
+        city: true,
+        state: true,
+        cep: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).send({ message: "User not found." });
+    }
+
+    return res.json(user);
+  },
+
   // @desc Creates new user
   // @method POST
   // @route /api/users

@@ -8,7 +8,7 @@ export const ProductController = {
   // @route /api/products
   // @access Public
 
-  async get(req: Request, res: Response) {
+  async getAll(req: Request, res: Response) {
     const prisma = new PrismaClient();
 
     const products = await prisma.product.findMany({
@@ -29,10 +29,43 @@ export const ProductController = {
     });
 
     if (!products) {
-      return res.status(404).send({ message: "No products found." });
+      return res.status(404).send({ message: "Products not found." });
     }
 
     return res.json(products);
+  },
+
+  // @desc Gets single product
+  // @method GET
+  // @route /api/products/:productId
+  // @access Public
+
+  async get(req: Request, res: Response) {
+    const prisma = new PrismaClient();
+
+    const product = await prisma.product.findOne({
+      where: { id: +req.params.productId },
+      include: {
+        owner: {
+          select: {
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+            address: true,
+            city: true,
+            state: true,
+            cep: true,
+          },
+        },
+      },
+    });
+
+    if (!product) {
+      return res.status(404).send({ message: "Product not found." });
+    }
+
+    return res.json(product);
   },
 
   // @desc Create new product

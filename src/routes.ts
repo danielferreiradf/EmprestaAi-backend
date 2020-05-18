@@ -6,11 +6,13 @@ import { OrderController } from "./app/controllers/OrderController";
 export const routes = Router();
 
 // User Routes
-routes.get("/users", UserController.get);
+routes.get("/users/:userId", UserController.get);
+routes.get("/users", UserController.getAll);
 routes.post("/users", UserController.create);
 
 // Product Routes
-routes.get("/products", ProductController.get);
+routes.get("/products/:productId", ProductController.get);
+routes.get("/products", ProductController.getAll);
 routes.post("/products/", ProductController.create);
 
 // Order Routes
