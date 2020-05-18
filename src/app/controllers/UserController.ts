@@ -28,7 +28,7 @@ export const UserController = {
 
     return res.json(users);
   },
-  // @desc Creates a new user
+  // @desc Creates new user
   // @method POST
   // @route /api/users
   // @access Public
