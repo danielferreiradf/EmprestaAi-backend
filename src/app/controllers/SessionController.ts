@@ -7,8 +7,8 @@ import bcryptjs from "bcryptjs";
 export const SessionController = {
   // @desc Create session with JWT Token and Cookie
   // @method POST
-  // @route /api/session
-  // @access
+  // @route /api/sessions
+  // @access Public
 
   async create(req: Request, res: Response) {
     try {
@@ -21,7 +21,9 @@ export const SessionController = {
       const { error } = createSessionSchema.validate(req.body);
 
       if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        return res
+          .status(400)
+          .json({ success: false, message: error.details[0].message });
       }
 
       const userExists = await prisma.user.findOne({
@@ -29,11 +31,15 @@ export const SessionController = {
       });
 
       if (!userExists) {
-        return res.status(401).json({ message: "Invalid credentials." });
+        return res
+          .status(401)
+          .json({ sucess: false, message: "Invalid credentials." });
       }
 
       if (!(await bcryptjs.compare(req.body.password, userExists.password))) {
-        return res.status(401).json({ message: "Invalid credentials." });
+        return res
+          .status(401)
+          .json({ success: false, message: "Invalid credentials." });
       }
 
       const { id, firstName, lastName, email } = userExists;
@@ -51,16 +57,19 @@ export const SessionController = {
       };
 
       return res.cookie("token", token, cookieOptions).json({
-        user: {
-          id,
-          firstName,
-          lastName,
-          email,
+        success: true,
+        data: {
+          user: {
+            id,
+            firstName,
+            lastName,
+            email,
+          },
+          token,
         },
-        token,
       });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 };

@@ -29,12 +29,14 @@ export const UserController = {
       });
 
       if (!users) {
-        return res.status(404).send({ message: "Users not found." });
+        return res
+          .status(404)
+          .send({ success: false, message: "Users not found" });
       }
 
-      return res.json(users);
+      return res.json({ success: true, data: users });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
@@ -63,12 +65,14 @@ export const UserController = {
       });
 
       if (!user) {
-        return res.status(404).send({ message: "User not found." });
+        return res
+          .status(404)
+          .send({ success: false, message: "User not found" });
       }
 
-      return res.json(user);
+      return res.json({ success: true, data: user });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
@@ -95,13 +99,16 @@ export const UserController = {
           cep: true,
         },
       });
+
       if (!user) {
-        return res.status(404).send({ message: "User not found." });
+        return res
+          .status(404)
+          .send({ success: false, message: "User not found" });
       }
 
-      return res.json(user);
+      return res.json({ success: true, data: user });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
@@ -128,7 +135,9 @@ export const UserController = {
       const { error } = createUserSchema.validate(req.body);
 
       if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        return res
+          .status(400)
+          .json({ success: false, message: error.details[0].message });
       }
 
       const userExists = await prisma.user.findOne({
@@ -136,7 +145,9 @@ export const UserController = {
       });
 
       if (userExists) {
-        return res.status(400).json({ message: "User already exists." });
+        return res
+          .status(400)
+          .json({ success: false, message: "User already exists" });
       }
 
       const hashedPassword = await bcryptjs.hash(req.body.password, 8);
@@ -156,9 +167,94 @@ export const UserController = {
         },
       });
 
-      return res.json(newUser);
+      return res.json({ success: true, data: newUser });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // @desc Update logged user
+  // @method PUT
+  // @route /api/users/me
+  // @access Private
+
+  async update(req: AuthRequest, res: Response) {
+    try {
+      const prisma = new PrismaClient();
+
+      const createUserSchema = Joi.object().keys({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        address: Joi.string().required(),
+        city: Joi.string().required(),
+        state: Joi.string().required(),
+        cep: Joi.number().required(),
+        phone: Joi.number().required(),
+        // password: Joi.string().min(6).required(),
+      });
+
+      const { error } = createUserSchema.validate(req.body);
+
+      if (error) {
+        return res
+          .status(400)
+          .json({ success: false, message: error.details[0].message });
+      }
+
+      const user = await prisma.user.findOne({ where: { id: req.userId } });
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User does not exist" });
+      }
+
+      const updatedUser = await prisma.user.update({
+        where: { id: user.id },
+        data: { ...req.body },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          state: true,
+          cep: true,
+        },
+      });
+
+      return res.json({ success: true, data: updatedUser });
     } catch (error) {
       return res.status(500).json({ message: error.message });
+    }
+  },
+
+  // @desc Delete logged user
+  // @method Delete
+  // @route /api/users/me
+  // @access Private
+
+  async delete(req: AuthRequest, res: Response) {
+    try {
+      const prisma = new PrismaClient();
+
+      const user = await prisma.user.findOne({ where: { id: req.userId } });
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ success: false, message: "User does not exist" });
+      }
+
+      await prisma.user.delete({
+        where: { id: user.id },
+      });
+
+      return res.json({ success: true, message: "User deleted", data: {} });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 };

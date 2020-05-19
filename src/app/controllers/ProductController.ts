@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import Joi from "@hapi/joi";
+import { AuthRequest } from "../interfaces/auth";
 
 export const ProductController = {
   // @desc Get all products
@@ -30,16 +31,18 @@ export const ProductController = {
       });
 
       if (!products) {
-        return res.status(404).send({ message: "Products not found." });
+        return res
+          .status(404)
+          .json({ success: false, message: "Products not found." });
       }
 
-      return res.json(products);
+      return res.json({ success: true, data: products });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // @desc Gets single product
+  // @desc Get single product
   // @method GET
   // @route /api/products/:productId
   // @access Public
@@ -67,21 +70,23 @@ export const ProductController = {
       });
 
       if (!product) {
-        return res.status(404).send({ message: "Product not found." });
+        return res
+          .status(404)
+          .json({ success: false, message: "Product not found." });
       }
 
-      return res.json(product);
+      return res.json({ success: true, data: product });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
-  // @desc Gets all products from user
+  // @desc Get all products from user
   // @method GET
   // @route /api/users/products/:ownerId
   // @access Private
 
-  async getUserProducts(req: Request, res: Response) {
+  async getUserProducts(req: AuthRequest, res: Response) {
     try {
       const prisma = new PrismaClient();
 
@@ -99,12 +104,14 @@ export const ProductController = {
       });
 
       if (!products || !products.length) {
-        return res.status(404).send({ message: "Products not found." });
+        return res
+          .status(404)
+          .json({ success: false, message: "Products not found" });
       }
 
-      return res.json(products);
+      return res.json({ success: true, data: products });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
@@ -113,7 +120,7 @@ export const ProductController = {
   // @route /api/products
   // @access Private
 
-  async create(req: Request, res: Response) {
+  async create(req: AuthRequest, res: Response) {
     try {
       const prisma = new PrismaClient();
 
@@ -129,7 +136,9 @@ export const ProductController = {
       const { error } = createProductSchema.validate(req.body);
 
       if (error) {
-        return res.status(400).json({ message: error.details[0].message });
+        return res
+          .status(400)
+          .json({ success: false, message: error.details[0].message });
       }
 
       const newProduct = await prisma.product.create({
@@ -138,13 +147,13 @@ export const ProductController = {
           price: req.body.price,
           description: req.body.description,
           location: req.body.location,
-          owner: { connect: { id: req.body.ownerId } },
+          owner: { connect: { id: req.userId } },
         },
       });
 
-      return res.json(newProduct);
+      return res.json({ success: true, data: newProduct });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 };
