@@ -2,6 +2,7 @@ import { Router } from "express";
 import { UserController } from "./app/controllers/UserController";
 import { ProductController } from "./app/controllers/ProductController";
 import { OrderController } from "./app/controllers/OrderController";
+import { SessionController } from "./app/controllers/SessionController";
 
 export const routes = Router();
 
@@ -9,6 +10,9 @@ export const routes = Router();
 routes.get("/users/:userId", UserController.get);
 routes.get("/users", UserController.getAll);
 routes.post("/users", UserController.create);
+
+// Session Routes
+routes.post("/sessions", SessionController.create);
 
 // Product Routes
 routes.get("/products/:productId", ProductController.get);
