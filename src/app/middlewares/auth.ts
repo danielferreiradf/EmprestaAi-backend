@@ -9,7 +9,7 @@ export const auth = async (
 ) => {
   const authHeader = req.headers.authorization;
   let token;
-  console.log(authHeader);
+
   if (authHeader) {
     // Get token - Remove "Bearer "
     token = authHeader.split(" ")[1];

@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 import Joi from "@hapi/joi";
+import { AuthRequest } from "../interfaces/auth";
 
 export const UserController = {
   // @desc Gets all users
@@ -61,6 +62,39 @@ export const UserController = {
         },
       });
 
+      if (!user) {
+        return res.status(404).send({ message: "User not found." });
+      }
+
+      return res.json(user);
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+  },
+
+  // @desc Get logged user
+  // @method GET
+  // @route /api/users/me
+  // @access Private
+
+  async getLoggedUser(req: AuthRequest, res: Response) {
+    try {
+      const prisma = new PrismaClient();
+
+      const user = await prisma.user.findOne({
+        where: { id: req.userId },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          address: true,
+          city: true,
+          state: true,
+          cep: true,
+        },
+      });
       if (!user) {
         return res.status(404).send({ message: "User not found." });
       }

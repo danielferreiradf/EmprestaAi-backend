@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import Joi from "@hapi/joi";
 
 export const ProductController = {
-  // @desc Gets all products
+  // @desc Get all products
   // @method GET
   // @route /api/products
   // @access Public

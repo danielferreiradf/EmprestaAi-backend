@@ -8,8 +8,9 @@ import { auth } from "./app/middlewares/auth";
 export const routes = Router();
 
 // User Routes
-routes.get("/users/:userId", UserController.get);
 routes.get("/users", UserController.getAll);
+routes.get("/users/me", auth, UserController.getLoggedUser);
+routes.get("/users/:userId", UserController.get);
 routes.post("/users", UserController.create);
 
 // Session Routes
@@ -19,7 +20,7 @@ routes.post("/sessions", SessionController.create);
 routes.get("/products/:productId", ProductController.get);
 routes.get("/products", ProductController.getAll);
 routes.get("/users/products/:ownerId", ProductController.getUserProducts);
-routes.post("/products", ProductController.create);
+routes.post("/products", auth, ProductController.create);
 
 // Order Routes
 routes.get("/orders", auth, OrderController.get);
