@@ -112,7 +112,7 @@ export const UserController = {
     }
   },
 
-  // @desc Creates new user
+  // @desc Create new user
   // @method POST
   // @route /api/users
   // @access Public

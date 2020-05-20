@@ -23,7 +23,7 @@ routes.get("/products", ProductController.getAll);
 routes.get("/products/:productId", ProductController.get);
 routes.get("/users/me/products", auth, ProductController.getUserProducts);
 routes.post("/products", auth, ProductController.create);
-// routes.put("/products/:productId", auth, ProductController.update);
+routes.put("/products/:productId", auth, ProductController.update);
 routes.delete("/products/:productId", auth, ProductController.delete);
 
 // Order Routes

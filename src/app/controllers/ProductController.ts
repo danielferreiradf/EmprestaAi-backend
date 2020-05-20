@@ -154,6 +154,68 @@ export const ProductController = {
     }
   },
 
+  // @desc Update product
+  // @method PUT
+  // @route /api/products/:productId
+  // @access Private
+
+  async update(req: AuthRequest, res: Response) {
+    try {
+      const prisma = new PrismaClient();
+
+      const updateProductSchema = Joi.object().keys({
+        name: Joi.string().required(),
+        price: Joi.number().required(),
+        description: Joi.string().min(10).required(),
+        location: Joi.string().required(),
+      });
+
+      const { error } = updateProductSchema.validate(req.body);
+
+      if (error) {
+        return res
+          .status(400)
+          .json({ success: false, message: error.details[0].message });
+      }
+
+      const product = await prisma.product.findOne({
+        where: { id: +req.params.productId },
+      });
+
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product does not exist" });
+      }
+
+      // Check if product owner is the same as logged user
+      if (product?.ownerId !== req.userId) {
+        return res.status(401).json({
+          success: false,
+          message: "User does not have permission to update this product.",
+        });
+      }
+
+      const updatedProduct = await prisma.product.update({
+        where: { id: product.id },
+        data: {
+          name: req.body.name,
+          price: req.body.price,
+          description: req.body.description,
+          location: req.body.location,
+        },
+      });
+
+      return res.json({
+        success: true,
+        message: "Product updated",
+        data: updatedProduct,
+      });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
   // @desc Delete product
   // @method DELETE
   // @route /api/products/:productId
