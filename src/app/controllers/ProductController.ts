@@ -129,6 +129,7 @@ export const ProductController = {
         description: Joi.string().min(10).required(),
         location: Joi.string().required(),
       });
+
       const { error } = createProductSchema.validate(req.body);
 
       if (error) {

@@ -149,10 +149,32 @@ export const UserController = {
           .json({ success: false, message: "User already exists" });
       }
 
-      const hashedPassword = await bcryptjs.hash(req.body.password, 8);
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        address,
+        city,
+        state,
+        cep,
+        phone,
+      } = req.body;
+
+      const hashedPassword = await bcryptjs.hash(password, 8);
 
       const newUser = await prisma.user.create({
-        data: { ...req.body, password: hashedPassword },
+        data: {
+          firstName,
+          lastName,
+          email,
+          password: hashedPassword,
+          address,
+          city,
+          state,
+          cep,
+          phone,
+        },
         select: {
           id: true,
           firstName: true,
