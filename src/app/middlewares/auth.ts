@@ -1,10 +1,10 @@
 import Jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "../interfaces/controllers.types";
+import { CustomRequest, CustomResponse } from "../interfaces/controllers.types";
 
 export const auth = async (
-  req: AuthRequest,
-  res: Response,
+  req: CustomRequest,
+  res: CustomResponse,
   next: NextFunction
 ) => {
   const authHeader = req.headers.authorization;
@@ -18,7 +18,9 @@ export const auth = async (
   //   token = req.cookies.token;
   // }
   else {
-    return res.status(401).json({ error: "Token not provided." });
+    return res
+      .status(401)
+      .json({ success: false, message: "Token not provided" });
   }
 
   try {
@@ -29,6 +31,6 @@ export const auth = async (
     req.userId = decoded.id;
     next();
   } catch (error) {
-    return res.status(500).json({ message: "Token invalid." });
+    return res.status(500).json({ success: false, message: "Token invalid" });
   }
 };

@@ -37,22 +37,3 @@ export interface CustomResponse extends Response {
     message?: string;
   }) => any;
 }
-
-// export interface UserSchemaValidation extends ObjectSchema {
-//   firstName: Joi.StringSchema;
-//   lastName: string;
-//   email: string;
-//   address: string;
-//   city: string;
-//   state: string;
-//   cep: number;
-//   phone: number;
-//   password?: string;
-// }
-
-// export interface ProductSchemaValidation {
-//   name: string;
-//   price: number;
-//   description: string;
-//   location: string;
-// }

@@ -6,7 +6,7 @@ declare global {
       URL: string;
       JWT_SECRET: string;
       JWT_EXPIRE: string;
-      JWT_EXPIRE_COOKIE: number;
+      JWT_EXPIRE_COOKIE: any;
     }
   }
 }
