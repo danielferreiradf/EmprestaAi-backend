@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 import Joi from "@hapi/joi";
-import { AuthRequest } from "../interfaces/auth";
+import { AuthRequest } from "../interfaces/controllers.types";
 
 export const UserController = {
   // @desc Gets all users

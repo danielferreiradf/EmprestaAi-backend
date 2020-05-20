@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { AuthRequest } from "../interfaces/auth";
+import { AuthRequest } from "../interfaces/controllers.types";
 import { PrismaClient } from "@prisma/client";
 import Joi from "@hapi/joi";
 

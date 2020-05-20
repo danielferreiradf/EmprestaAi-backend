@@ -1,6 +1,6 @@
 import Jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
-import { AuthRequest } from "../interfaces/auth";
+import { AuthRequest } from "../interfaces/controllers.types";
 
 export const auth = async (
   req: AuthRequest,
