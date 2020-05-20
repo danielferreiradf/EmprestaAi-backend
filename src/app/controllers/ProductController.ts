@@ -13,6 +13,7 @@ export const ProductController = {
       const prisma = new PrismaClient();
 
       const products = await prisma.product.findMany({
+        where: { statusRent: false },
         include: {
           owner: {
             select: {

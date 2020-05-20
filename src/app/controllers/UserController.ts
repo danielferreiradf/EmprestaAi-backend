@@ -27,7 +27,7 @@ export const UserController = {
         },
       });
 
-      if (!users) {
+      if (!users || !users.length) {
         return res
           .status(404)
           .json({ success: false, message: "Users not found" });

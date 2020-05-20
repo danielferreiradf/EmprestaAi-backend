@@ -12,19 +12,26 @@ export interface CustomRequest extends Request {
     cep: string;
     phone: string;
     password: string;
+
     name: string;
     price: number;
     description: string;
     location: string;
+
+    productId: number;
+    ownerId: number;
+    startOfRent: string;
+    endOfRent: string;
   };
   params: {
     productId: string;
     userId: string;
+    orderId: string;
   };
 }
 
 export interface CustomResponse extends Response {
-  json: (params: {
+  json: (args: {
     success: boolean;
     data?: object[] | object;
     message?: string;

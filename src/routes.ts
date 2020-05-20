@@ -27,4 +27,7 @@ routes.put("/products/:productId", auth, ProductController.update);
 routes.delete("/products/:productId", auth, ProductController.delete);
 
 // Order Routes
-routes.get("/orders", auth, OrderController.get);
+routes.get("/orders", auth, OrderController.getAll);
+routes.get("/orders/:orderId", auth, OrderController.get);
+routes.post("/orders", auth, OrderController.create);
+routes.delete("/orders/:orderId", auth, OrderController.delete);
