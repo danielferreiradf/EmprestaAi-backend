@@ -234,54 +234,26 @@ export const OrderController = {
     try {
       const prisma = new PrismaClient();
 
-      const createOrderSchema = Joi.object().keys({
-        productId: Joi.number().required(),
-        ownerId: Joi.number().required(),
-        startOfRent: Joi.date().required(),
-        endOfRent: Joi.date().required(),
+      const order = await prisma.order.findOne({
+        where: { id: +req.params.orderId },
       });
 
-      const { error } = createOrderSchema.validate(req.body);
-
-      if (error) {
+      if (!order) {
         return res
-          .status(400)
-          .json({ success: false, message: error.details[0].message });
+          .status(404)
+          .json({ success: false, message: "Order does not exist" });
       }
 
-      // Check if ownerId and renterId are equal
-      if (req.body.ownerId === req.userId) {
-        return res
-          .status(400)
-          .json({ success: false, message: "User cannot rent this product" });
+      // Check if order owner is the same as logged user
+      if (order?.renterId !== req.userId) {
+        return res.status(401).json({
+          success: false,
+          message: "User does not have permission to delete this order.",
+        });
       }
 
-      const product = await prisma.product.findOne({
-        where: { id: req.body.productId },
-      });
-
-      // Check if product is already rented
-      if (product?.statusRent) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Product is already rented" });
-      }
-
-      const startDate = moment(req.body.startOfRent);
-      const endDate = moment(req.body.endOfRent);
-
-      const amountOfDays = moment.duration(endDate.diff(startDate)).asDays();
-      const totalPrice = amountOfDays * product!.price;
-
-      const newOrder = await prisma.order.create({
-        data: {
-          product: { connect: { id: req.body.productId } },
-          owner: { connect: { id: req.body.ownerId } },
-          renter: { connect: { id: req.userId } },
-          startOfRent: startDate.toISOString(),
-          endOfRent: endDate.toISOString(),
-          totalPrice: totalPrice,
-        },
+      const deletedOrder = await prisma.order.delete({
+        where: { id: order.id },
         include: {
           product: {
             select: {
@@ -316,11 +288,15 @@ export const OrderController = {
 
       // Update product rent status
       await prisma.product.update({
-        where: { id: req.body.productId },
-        data: { statusRent: true },
+        where: { id: order.productId },
+        data: { statusRent: false },
       });
 
-      return res.json({ success: true, data: newOrder });
+      return res.json({
+        success: true,
+        message: "Order deleted",
+        data: deletedOrder,
+      });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }
