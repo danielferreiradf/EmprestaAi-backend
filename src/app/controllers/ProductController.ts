@@ -33,7 +33,7 @@ export const ProductController = {
       if (!products) {
         return res
           .status(404)
-          .json({ success: false, message: "Products not found." });
+          .json({ success: false, message: "Products not found" });
       }
 
       return res.json({ success: true, data: products });
@@ -72,7 +72,7 @@ export const ProductController = {
       if (!product) {
         return res
           .status(404)
-          .json({ success: false, message: "Product not found." });
+          .json({ success: false, message: "Product not found" });
       }
 
       return res.json({ success: true, data: product });
@@ -81,9 +81,9 @@ export const ProductController = {
     }
   },
 
-  // @desc Get all products from user
+  // @desc Get all products from logged user
   // @method GET
-  // @route /api/users/products/:ownerId
+  // @route /api/users/me/products
   // @access Private
 
   async getUserProducts(req: AuthRequest, res: Response) {
@@ -91,7 +91,7 @@ export const ProductController = {
       const prisma = new PrismaClient();
 
       const products = await prisma.product.findMany({
-        where: { ownerId: +req.params.ownerId },
+        where: { ownerId: req.userId },
         select: {
           id: true,
           name: true,
@@ -124,14 +124,11 @@ export const ProductController = {
     try {
       const prisma = new PrismaClient();
 
-      // const { ownerId } = req.params;
-
       const createProductSchema = Joi.object().keys({
         name: Joi.string().required(),
         price: Joi.number().required(),
         description: Joi.string().min(10).required(),
         location: Joi.string().required(),
-        ownerId: Joi.number().required(),
       });
       const { error } = createProductSchema.validate(req.body);
 
@@ -152,6 +149,43 @@ export const ProductController = {
       });
 
       return res.json({ success: true, data: newProduct });
+    } catch (error) {
+      return res.status(500).json({ success: false, message: error.message });
+    }
+  },
+
+  // @desc Delete product
+  // @method DELETE
+  // @route /api/products/:productId
+  // @access Private
+
+  async delete(req: AuthRequest, res: Response) {
+    try {
+      const prisma = new PrismaClient();
+
+      const product = await prisma.product.findOne({
+        where: { id: +req.params.productId },
+      });
+
+      if (!product) {
+        return res
+          .status(404)
+          .json({ success: false, message: "Product does not exist" });
+      }
+
+      // Check if product owner is the same as logged user
+      if (product?.ownerId !== req.userId) {
+        return res.status(401).json({
+          success: false,
+          message: "User does not have permission to delete this product.",
+        });
+      }
+
+      await prisma.product.delete({
+        where: { id: product?.id },
+      });
+
+      return res.json({ success: true, message: "Product deleted", data: {} });
     } catch (error) {
       return res.status(500).json({ success: false, message: error.message });
     }
