@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import Jwt from "jsonwebtoken";
 import Joi from "@hapi/joi";
 import bcryptjs from "bcryptjs";
+import { CustomResponse } from "../interfaces/controllers.types";
 
 export const SessionController = {
   // @desc Create session with JWT Token and Cookie
@@ -10,7 +11,7 @@ export const SessionController = {
   // @route /api/sessions
   // @access Public
 
-  async create(req: Request, res: Response) {
+  async create(req: Request, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -33,7 +34,7 @@ export const SessionController = {
       if (!userExists) {
         return res
           .status(401)
-          .json({ sucess: false, message: "Invalid credentials." });
+          .json({ success: false, message: "Invalid credentials." });
       }
 
       if (!(await bcryptjs.compare(req.body.password, userExists.password))) {

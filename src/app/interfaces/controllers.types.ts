@@ -1,7 +1,15 @@
-import { Request } from "express";
+import { Request, Response } from "express";
 
-export interface AuthRequest extends Request {
+export interface CustomRequest extends Request {
   userId?: number;
+}
+
+export interface CustomResponse extends Response {
+  json: (params: {
+    success: boolean;
+    data?: object[] | object;
+    message?: string;
+  }) => any;
 }
 
 // export interface UserSchemaValidation extends ObjectSchema {

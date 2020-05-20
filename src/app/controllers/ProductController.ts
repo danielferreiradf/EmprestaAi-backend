@@ -1,7 +1,6 @@
-import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import Joi from "@hapi/joi";
-import { AuthRequest } from "../interfaces/controllers.types";
+import { CustomRequest, CustomResponse } from "../interfaces/controllers.types";
 
 export const ProductController = {
   // @desc Get all products
@@ -9,7 +8,7 @@ export const ProductController = {
   // @route /api/products
   // @access Public
 
-  async getAll(req: Request, res: Response) {
+  async getAll(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -47,7 +46,7 @@ export const ProductController = {
   // @route /api/products/:productId
   // @access Public
 
-  async get(req: Request, res: Response) {
+  async get(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -86,7 +85,7 @@ export const ProductController = {
   // @route /api/users/me/products
   // @access Private
 
-  async getUserProducts(req: AuthRequest, res: Response) {
+  async getUserProducts(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -120,7 +119,7 @@ export const ProductController = {
   // @route /api/products
   // @access Private
 
-  async create(req: AuthRequest, res: Response) {
+  async create(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -159,7 +158,7 @@ export const ProductController = {
   // @route /api/products/:productId
   // @access Private
 
-  async update(req: AuthRequest, res: Response) {
+  async update(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -221,7 +220,7 @@ export const ProductController = {
   // @route /api/products/:productId
   // @access Private
 
-  async delete(req: AuthRequest, res: Response) {
+  async delete(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 

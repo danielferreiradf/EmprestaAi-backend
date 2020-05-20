@@ -1,8 +1,7 @@
-import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bcryptjs from "bcryptjs";
 import Joi from "@hapi/joi";
-import { AuthRequest } from "../interfaces/controllers.types";
+import { CustomRequest, CustomResponse } from "../interfaces/controllers.types";
 
 export const UserController = {
   // @desc Gets all users
@@ -10,7 +9,7 @@ export const UserController = {
   // @route /api/users
   // @access Private
 
-  async getAll(req: Request, res: Response) {
+  async getAll(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -31,7 +30,7 @@ export const UserController = {
       if (!users) {
         return res
           .status(404)
-          .send({ success: false, message: "Users not found" });
+          .json({ success: false, message: "Users not found" });
       }
 
       return res.json({ success: true, data: users });
@@ -45,7 +44,7 @@ export const UserController = {
   // @route /api/users/:userId
   // @access Private
 
-  async get(req: Request, res: Response) {
+  async get(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -81,7 +80,7 @@ export const UserController = {
   // @route /api/users/me
   // @access Private
 
-  async getLoggedUser(req: AuthRequest, res: Response) {
+  async getLoggedUser(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -117,7 +116,7 @@ export const UserController = {
   // @route /api/users
   // @access Public
 
-  async create(req: Request, res: Response) {
+  async create(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -178,7 +177,7 @@ export const UserController = {
   // @route /api/users/me
   // @access Private
 
-  async update(req: AuthRequest, res: Response) {
+  async update(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
@@ -227,7 +226,7 @@ export const UserController = {
 
       return res.json({ success: true, data: updatedUser });
     } catch (error) {
-      return res.status(500).json({ message: error.message });
+      return res.status(500).json({ success: false, message: error.message });
     }
   },
 
@@ -236,7 +235,7 @@ export const UserController = {
   // @route /api/users/me
   // @access Private
 
-  async delete(req: AuthRequest, res: Response) {
+  async delete(req: CustomRequest, res: CustomResponse) {
     try {
       const prisma = new PrismaClient();
 
