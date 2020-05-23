@@ -1,13 +1,6 @@
 import request from "supertest";
 import { app } from "../../../../../src/app";
-
-interface IResponseBody {
-  body: {
-    success: boolean;
-    data?: object[] | object;
-    message?: string;
-  };
-}
+import { IResponseBody } from "../../../../app/interfaces/controllers.types";
 
 describe("GET /api/users", () => {
   it("should get all users", async () => {

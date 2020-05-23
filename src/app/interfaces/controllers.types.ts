@@ -37,3 +37,11 @@ export interface CustomResponse extends Response {
     message?: string;
   }) => any;
 }
+
+export interface IResponseBody {
+  body: {
+    success: boolean;
+    data?: object[] | object;
+    message?: string;
+  };
+}
