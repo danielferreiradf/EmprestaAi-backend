@@ -5,3 +5,4 @@ node_modules
 prisma/.env
 src/config/dev.env
 .env
+temp/uploads/*

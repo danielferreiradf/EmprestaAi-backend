@@ -5,7 +5,7 @@ generator client {
 // DEV DB
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url = "***"
 }
 
 model User {
@@ -24,7 +24,7 @@ model User {
   updatedAt      DateTime  @updatedAt
   ownedProducts  Order[]   @relation("OwnerOfProduct")
   rentedProducts Order[]   @relation("RenterOfProduct")
-  File           File[]    @relation("UploaderOfFile")
+  File           File[]
 
   @@map("users")
 }
@@ -53,7 +53,7 @@ model File {
   path      String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-  owner     User      @relation("UploaderOfFile", fields: [ownerId], references: [id])
+  owner     User      @relation(fields: [ownerId], references: [id])
   ownerId   Int
   Product   Product[]
 
