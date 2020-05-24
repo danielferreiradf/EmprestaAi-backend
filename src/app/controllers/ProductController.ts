@@ -27,6 +27,13 @@ export const ProductController = {
               cep: true,
             },
           },
+          picture: {
+            select: {
+              id: true,
+              name: true,
+              path: true,
+            },
+          },
         },
       });
 
@@ -66,6 +73,13 @@ export const ProductController = {
               cep: true,
             },
           },
+          picture: {
+            select: {
+              id: true,
+              name: true,
+              path: true,
+            },
+          },
         },
       });
 
@@ -100,6 +114,13 @@ export const ProductController = {
           location: true,
           ownerId: true,
           statusRent: true,
+          picture: {
+            select: {
+              id: true,
+              name: true,
+              path: true,
+            },
+          },
         },
       });
 
@@ -129,6 +150,7 @@ export const ProductController = {
         price: Joi.number().required(),
         description: Joi.string().min(10).required(),
         location: Joi.string().required(),
+        pictureId: Joi.number().required(),
       });
 
       const { error } = createProductSchema.validate(req.body);
@@ -145,6 +167,7 @@ export const ProductController = {
           price: req.body.price,
           description: req.body.description,
           location: req.body.location,
+          picture: { connect: { id: req.body.pictureId } },
           owner: { connect: { id: req.userId } },
         },
       });
@@ -169,6 +192,7 @@ export const ProductController = {
         price: Joi.number().required(),
         description: Joi.string().min(10).required(),
         location: Joi.string().required(),
+        pictureId: Joi.number().required(),
       });
 
       const { error } = updateProductSchema.validate(req.body);

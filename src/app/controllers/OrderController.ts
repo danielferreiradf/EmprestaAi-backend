@@ -26,6 +26,7 @@ export const OrderController = {
               location: true,
               ownerId: true,
               statusRent: true,
+              picture: { select: { name: true } },
             },
           },
           owner: {
@@ -90,6 +91,7 @@ export const OrderController = {
               location: true,
               ownerId: true,
               statusRent: true,
+              picture: { select: { name: true } },
             },
           },
           owner: {

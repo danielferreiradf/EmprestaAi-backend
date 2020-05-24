@@ -17,6 +17,7 @@ export interface CustomRequest extends Request {
     price: number;
     description: string;
     location: string;
+    pictureId: number;
 
     productId: number;
     ownerId: number;
