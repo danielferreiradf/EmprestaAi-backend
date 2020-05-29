@@ -13,7 +13,10 @@ export const ProductController = {
       const prisma = new PrismaClient();
 
       const products = await prisma.product.findMany({
-        where: { statusRent: false },
+        where: {
+          statusRent: { equals: false },
+          name: { contains: req.query.productName },
+        },
         include: {
           owner: {
             select: {
@@ -37,7 +40,7 @@ export const ProductController = {
         },
       });
 
-      if (!products) {
+      if (!products || !products.length) {
         return res
           .status(404)
           .json({ success: false, message: "Products not found" });

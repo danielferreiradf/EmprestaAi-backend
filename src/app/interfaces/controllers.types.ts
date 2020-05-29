@@ -29,6 +29,9 @@ export interface CustomRequest extends Request {
     userId: string;
     orderId: string;
   };
+  query: {
+    productName: string;
+  };
 }
 
 export interface CustomResponse extends Response {
